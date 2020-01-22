@@ -28,7 +28,31 @@
     az: us-east-1c
     state: present
 
-- name: create IGW
- ec2_vpc_igw:
-   state: present
-   vpc_id: "{{ my_vpc.vpc.id }}"
+- name: create Internet Gateway
+  ec2_vpc_igw:
+    state: present
+    vpc_id: "{{ my_vpc.vpc.id }}"
+  register: my_vpc_igw
+
+- name: create route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ my_vpc.vpc.id }}"
+    subnets:
+      - "{{ subnet1_cidr }}"
+      - "{{ subnet2_cidr }}"
+      - "{{ subnet3_cidr }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ my_vpc_igw.gateway_id}}"
+
+- name: create security group
+  ec2_group:
+    name: ec2-sg
+    description: "security group for jenkins ec2"
+    state: present
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+    vpc_id: "{{ my_vpc.vpc.id }}"
