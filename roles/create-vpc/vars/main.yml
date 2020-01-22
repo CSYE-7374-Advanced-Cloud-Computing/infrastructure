@@ -1,2 +1,4 @@
 ---
-# vars file for create-vpc
+# vars file for create_vpc
+vpc_name: "My_VPC"
+vpc_cidr: "10.0.0.0/16"

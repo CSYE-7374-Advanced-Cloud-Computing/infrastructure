@@ -1,2 +1,7 @@
 ---
-# tasks file for create-vpc
+# tasks file for create_vpc
+- name: create create_vpc
+  ec2_vpc_net:
+    name: {{vpc_name}}
+    cidr_block: {{vpc_cidr}}
+    
