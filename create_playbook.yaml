@@ -2,3 +2,16 @@
 - hosts: localhost
   roles:
     - create-vpc
+    - create-ec2
+
+- hosts: jenkinserver
+  become: yes
+  remote_user: ubuntu
+  tasks:
+  - name: add repo
+    apt_repository:
+      repo: ppa:webupd8team/java
+
+  - name: install java
+    apt:
+      name: oracle-java8-installer

@@ -72,31 +72,3 @@
         to_port: 22
         cidr_ip: 0.0.0.0/0
     vpc_id: "{{ my_vpc.vpc.id }}"
-
-#get the security group
-- name: get security ec2_grou
-  ec2_group_info:
-    filters:
-      group-name: "{{ sg_name }}"
-  register: sg
-
-# create a key for ec2
-- name: ec2-key
-  ec2_key:
-    name: csye7374
-
-#create ec2
-- name: create ec2
-  ec2:
-    assign_public_ip: yes
-    group: ec2-sg
-    image: "{{ image_id }}"
-    count_tag: app
-    exact_count: 1
-    instance_tags:
-      "app": "jenkins"
-    instance_type: t2.micro
-    key_name: csye7374
-    region: us-east-1
-    vpc_subnet_id: "{{ subnet1.subnet.id }}"
-    wait: yes
