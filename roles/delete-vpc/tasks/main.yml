@@ -2,15 +2,19 @@
 # tasks file for delete-vpc
 
 # Gather facts about all VPCs
-- name: List all vpcs
-  ec2_vpc_net_facts:
+- name: all vpcs
+  ec2_vpc_net_info:
     region: "{{region}}"
+    filters:
+      "tag:name": my-vpc
   register: all_vpc
 
 # Gather information about all VPC route tables
-- name: List all vpc route tables
+- name: all vpc route tables
   ec2_vpc_route_table_info:
     region: "{{region}}"
+    filters:
+      "tag:name": my-rt
   register: all_vpc_route_table
 
 # Gather information about all Network ACLs:
@@ -23,6 +27,8 @@
 - name: Get All security groups
   ec2_group_info:
     region: "{{region}}"
+    filters:
+      "tag:name": ec2-sg
   register: all_security_groups
 
 #delete a public subnet 1
@@ -46,7 +52,7 @@
     cidr: "{{ subnet3_cidr }}"
     state: absent
 
-#delete a IGW 
+#delete a IGW
 - name: delete Internet Gateway
   ec2_vpc_igw:
     vpc_id: "{{ all_vpc.vpcs[0]['vpc_id'] }}"
@@ -59,8 +65,8 @@
     group_id: "{{all_security_groups.security_groups[0]['group_id']}}"
     state: absent
 
-#delete a non-main route table 
-- name: delete non-main route table 
+#delete a non-main route table
+- name: delete non-main route table
   ec2_vpc_route_table:
     vpc_id: "{{ all_vpc.vpcs[0]['vpc_id'] }}"
     region: "{{region}}"
