@@ -74,7 +74,7 @@
     vpc_id: "{{ my_vpc.vpc.id }}"
 
 #get the security group
-- name: get security ec2_group
+- name: get security ec2_grou
   ec2_group_info:
     filters:
       group-name: "{{ sg_name }}"
@@ -85,17 +85,18 @@
   ec2_key:
     name: csye7374
 
-# #create ec2
-# - name: create ec2
-#   ec2:
-#     assign_public_ip: yes
-#     group: ec2-sg
-#     image: "{{ image_id }}"
-#     instance_tags:
-#       "app": "jenkins"
-#     instance_type: t2.micro
-#     key_name: csye7374
-#     state: present
-#     region: us-east-1
-#     vpc_subnet_id:
-#     wait: yes
+#create ec2
+- name: create ec2
+  ec2:
+    assign_public_ip: yes
+    group: ec2-sg
+    image: "{{ image_id }}"
+    count_tag: app
+    exact_count: 1
+    instance_tags:
+      "app": "jenkins"
+    instance_type: t2.micro
+    key_name: csye7374
+    region: us-east-1
+    vpc_subnet_id: "{{ subnet1.subnet.id }}"
+    wait: yes
