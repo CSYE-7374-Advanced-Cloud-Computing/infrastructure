@@ -7,6 +7,8 @@
     name: "{{ vpc_name }}"
     cidr_block: "{{ vpc_cidr }}"
     state: present
+    tags:
+      name: my-vpc
   register: my_vpc
 
 #creates a public subnet in vpc
@@ -16,6 +18,7 @@
     vpc_id: "{{ my_vpc.vpc.id }}"
     az: us-east-1a
     state: present
+  register: subnet1
 
 #creates a public subnet in vpc
 - name: create public subnet 2
@@ -48,6 +51,8 @@
       - "{{ subnet1_cidr }}"
       - "{{ subnet2_cidr }}"
       - "{{ subnet3_cidr }}"
+    tags:
+      name: my-rt
     routes:
       - dest: 0.0.0.0/0
         gateway_id: "{{ my_vpc_igw.gateway_id}}"
@@ -56,12 +61,41 @@
 #creates a ec2 security group
 - name: create security group
   ec2_group:
-    name: ec2-sg
+    name: "{{ sg_name }}"
     description: "security group for jenkins ec2"
     state: present
+    tags:
+      name: ec2-sg
     rules:
       - proto: tcp
         from_port: 22
         to_port: 22
         cidr_ip: 0.0.0.0/0
     vpc_id: "{{ my_vpc.vpc.id }}"
+
+#get the security group
+- name: get security ec2_group
+  ec2_group_info:
+    filters:
+      group-name: "{{ sg_name }}"
+  register: sg
+
+# create a key for ec2
+- name: ec2-key
+  ec2_key:
+    name: csye7374
+
+# #create ec2
+# - name: create ec2
+#   ec2:
+#     assign_public_ip: yes
+#     group: ec2-sg
+#     image: "{{ image_id }}"
+#     instance_tags:
+#       "app": "jenkins"
+#     instance_type: t2.micro
+#     key_name: csye7374
+#     state: present
+#     region: us-east-1
+#     vpc_subnet_id:
+#     wait: yes
