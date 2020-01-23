@@ -12,6 +12,54 @@
     apt_repository:
       repo: ppa:webupd8team/java
 
-  - name: install java
+  - name: install java8 jdk
     apt:
-      name: oracle-java8-installer
+      name: openjdk-8-jdk
+
+  - name: install java8 jre
+    apt:
+      name: openjdk-8-jdk
+
+  - name: add key
+    apt_key:
+      url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+      state: present
+
+  - name: add jenkins repo
+    apt_repository:
+      repo: deb http://pkg.jenkins-ci.org/debian binary/
+
+  - name: install jenkins
+    apt:
+      name: jenkins
+
+  - name: get nginx repo
+    apt_repository:
+      repo: ppa:certbot/certbot
+
+  - name: install ngxin and certbort
+    apt:
+      pkg:
+      - nginx
+      - python-certbot-nginx
+
+  - name: copy default file
+    copy:
+      src: /home/hemal/csye-7374/infrastructure/default
+      dest: /etc/nginx/sites-available/default
+      owner: root
+      group: root
+      mode: u=rw,g=rw,o=r
+
+  - name: test nginx
+    shell:
+      cmd: nginx -t
+
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
+
+  - name: get certificate
+    shell:
+      cmd: certbot --nginx -d jenkins.hgadhiya.me --email hemalgadhiya@gmail.com --agree-tos -n

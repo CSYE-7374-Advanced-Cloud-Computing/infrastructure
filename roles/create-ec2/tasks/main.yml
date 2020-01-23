@@ -45,3 +45,15 @@
     ansible_ssh_host: "{{ item.public_dns_name}}"
     ansible_ssh_private_key_file: "{{ keyfile }}"
   with_items: "{{ ec2.instances }}"
+
+- name: update route 53 record
+  route53:
+    state: present
+    zone: hgadhiya.me.
+    record: jenkins.hgadhiya.me.
+    type: A
+    ttl: 60
+    overwrite: yes
+    value: "{{ item.public_ip }}"
+    wait: yes
+  with_items: "{{ ec2.instances }}"
