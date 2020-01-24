@@ -1,5 +1,9 @@
 ---
 - hosts: localhost
+  vars_prompt:
+    - name: domain_name
+      prompt: "What is your domain name?"
+      private: no
   roles:
     - create-vpc
     - create-ec2
@@ -45,7 +49,7 @@
 
   - name: copy default file
     copy:
-      src: /home/hemal/csye-7374/infrastructure/default
+      src: /home/iampaavan/csye-7374/infrastructure/default
       dest: /etc/nginx/sites-available/default
       owner: root
       group: root
@@ -62,4 +66,4 @@
 
   - name: get certificate
     shell:
-      cmd: certbot --nginx -d jenkins.hgadhiya.me --email hemalgadhiya@gmail.com --agree-tos -n
+      cmd: certbot --nginx -d jenkins.paavangopala.me --email paavan014@gmail.com --agree-tos -n

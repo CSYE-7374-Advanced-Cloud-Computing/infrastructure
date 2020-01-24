@@ -1,0 +1,18 @@
+---
+# tasks file for delete-ec2
+
+# Gather facts about a particular instance using tags
+- name: Get all EC2 instances
+  ec2_instance_facts:
+    filters:
+      "tag:app": "{{ tag_value }}"
+      "instance-state-name": running
+  register: all_ec2
+
+- name: Delete EC2
+  ec2:
+    region: "{{region}}"
+    state: absent
+    wait: yes
+    instance_ids: '{{ item.instance_id }}'
+  with_items: "{{all_ec2.instances}}"

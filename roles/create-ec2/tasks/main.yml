@@ -49,8 +49,8 @@
 - name: update route 53 record
   route53:
     state: present
-    zone: hgadhiya.me.
-    record: jenkins.hgadhiya.me.
+    zone: "{{ domain_name }}"
+    record: "jenkins.{{ domain_name }}"
     type: A
     ttl: 60
     overwrite: yes
