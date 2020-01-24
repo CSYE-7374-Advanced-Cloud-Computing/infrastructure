@@ -15,7 +15,13 @@
       private: no
   become: yes
   remote_user: ubuntu
+  
   tasks:
+  - name: Upgrade all packages to the latest version
+    apt:
+      name: "*"
+      state: latest
+
   - name: add repo
     apt_repository:
       repo: ppa:webupd8team/java
