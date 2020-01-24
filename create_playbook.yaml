@@ -9,6 +9,10 @@
     - create-ec2
 
 - hosts: jenkinserver
+  vars_prompt:
+    - name: domain_name
+      prompt: "What is your domain name?"
+      private: no
   become: yes
   remote_user: ubuntu
   tasks:
@@ -49,7 +53,7 @@
 
   - name: copy default file
     copy:
-      src: /home/iampaavan/csye-7374/infrastructure/default
+      src: ./default
       dest: /etc/nginx/sites-available/default
       owner: root
       group: root
@@ -66,4 +70,4 @@
 
   - name: get certificate
     shell:
-      cmd: certbot --nginx -d jenkins.paavangopala.me --email paavan014@gmail.com --agree-tos -n
+      cmd: certbot --nginx -d jenkins.{{ domain_name|quote }} --email paavan014@gmail.com --agree-tos -n
