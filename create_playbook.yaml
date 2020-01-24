@@ -15,7 +15,7 @@
       private: no
   become: yes
   remote_user: ubuntu
-  
+
   tasks:
   - name: Upgrade all packages to the latest version
     apt:
@@ -76,4 +76,4 @@
 
   - name: get certificate
     shell:
-      cmd: certbot --nginx -d jenkins.{{ domain_name|quote }} --email paavan014@gmail.com --agree-tos -n
+      cmd: certbot --nginx -d jenkins.{{ domain_name|quote }} --email paavan014@gmail.com --agree-tos -n --test-cert
