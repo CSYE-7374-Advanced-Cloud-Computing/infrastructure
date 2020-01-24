@@ -76,4 +76,4 @@
 
   - name: get certificate
     shell:
-      cmd: certbot --nginx -d jenkins.{{ domain_name|quote }} --email paavan014@gmail.com --agree-tos -n --test-cert
+      cmd: certbot certonly --nginx -d jenkins.{{ domain_name|quote }} --email paavan014@gmail.com --agree-tos -n 
