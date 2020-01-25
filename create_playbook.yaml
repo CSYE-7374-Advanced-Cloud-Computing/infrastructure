@@ -76,4 +76,4 @@
 
   - name: get certificate
     shell:
-      cmd: certbot certonly --nginx -d jenkins.{{ domain_name|quote }} --email paavan014@gmail.com --agree-tos -n --dry-run 
+      cmd: certbot --nginx --email hemalgadhiya@gmail.com --agree-tos -n --staging -d jenkins.{{ domain_name|quote }}
