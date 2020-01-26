@@ -8,16 +8,11 @@
       "tag:name": ec2-sg
   register: sg
 
-# create a key for ec2
-- name: ec2-key
-  ec2_key:
-    name: csye7374
-
 #create ec2
 - name: create ec2
   ec2:
     assign_public_ip: yes
-    group: ec2-sg
+    group: "{{ item.group_name }}"
     image: "{{ image_id }}"
     count_tag: app
     exact_count: 1
@@ -28,6 +23,7 @@
     region: us-east-1
     vpc_subnet_id: "{{ subnet1.subnet.id }}"
     wait: true
+  with_items: "{{ sg.security_groups }}"
   register: ec2
 
 - name: wait for instance to be created
