@@ -11,6 +11,13 @@
       name: my-vpc
   register: my_vpc
 
+# - name: Get the current caller identity information
+#   aws_caller_info:
+#   register: caller_info
+#
+# - debug:
+#     var: caller_info
+
 #creates a public subnet in vpc
 - name: create public subnet 1
   ec2_vpc_subnet:

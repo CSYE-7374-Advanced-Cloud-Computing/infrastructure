@@ -8,6 +8,9 @@
     - create-vpc
     - create-ec2
 
+  environment:
+    AWS_PROFILE: default
+
 - hosts: jenkinserver
   vars_prompt:
     - name: domain_name
