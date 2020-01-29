@@ -17,12 +17,6 @@
       "tag:name": my-rt
   register: all_vpc_route_table
 
-# Gather information about all Network ACLs:
-- name: Get All NACLs
-  ec2_vpc_nacl_info:
-    region: "{{region}}"
-  register: all_nacls
-
 # Gather information about all security groups
 - name: Get All security groups
   ec2_group_info:
@@ -34,45 +28,58 @@
 #delete a public subnet 1
 - name: delete public subnet 1
   ec2_vpc_subnet:
-    vpc_id: "{{ all_vpc.vpcs[0]['vpc_id'] }}"
+    vpc_id: "{{ item.vpc_id }}"
     cidr: "{{ subnet1_cidr }}"
     state: absent
+  with_items: "{{ all_vpc.vpcs }}"
+  when: all_vpc.vpcs is defined
 
 #delete a public subnet 2
 - name: delete public subnet 2
   ec2_vpc_subnet:
-    vpc_id: "{{ all_vpc.vpcs[0]['vpc_id'] }}"
+    vpc_id: "{{ item.vpc_id }}"
     cidr: "{{ subnet2_cidr }}"
     state: absent
+  with_items: "{{ all_vpc.vpcs }}"
+  when: all_vpc.vpcs is defined
+  # when: all_vpc.vpcs is defined
 
 #delete a public subnet 3
 - name: delete public subnet 3
   ec2_vpc_subnet:
-    vpc_id: "{{ all_vpc.vpcs[0]['vpc_id'] }}"
+    vpc_id: "{{ item.vpc_id }}"
     cidr: "{{ subnet3_cidr }}"
     state: absent
+  with_items: "{{ all_vpc.vpcs }}"
+  when: all_vpc.vpcs is defined
 
 #delete a IGW
 - name: delete Internet Gateway
   ec2_vpc_igw:
-    vpc_id: "{{ all_vpc.vpcs[0]['vpc_id'] }}"
+    vpc_id: "{{ item.vpc_id }}"
     state: absent
+  with_items: "{{ all_vpc.vpcs }}"
+  when: all_vpc.vpcs is defined
 
 #delete security group
 - name: "Delete group by its id"
   ec2_group:
     region: "{{region}}"
-    group_id: "{{all_security_groups.security_groups[0]['group_id']}}"
+    group_id: "{{ item.group_id }}"
     state: absent
+  with_items: "{{ all_security_groups.security_groups }}"
+  when: all_security_groups.security_groups is defined
 
 #delete a non-main route table
 - name: delete non-main route table
   ec2_vpc_route_table:
     vpc_id: "{{ all_vpc.vpcs[0]['vpc_id'] }}"
     region: "{{region}}"
-    route_table_id: "{{ all_vpc_route_table.route_tables[0]['id'] }}"
+    route_table_id: "{{ item.id }}"
     lookup: id
     state: absent
+  with_items: "{{ all_vpc_route_table.route_tables }}"
+  when: all_vpc_route_table.route_tables is defined
 
 #delete a vpc
 - name: delete vpc
@@ -80,4 +87,4 @@
     name: "{{ vpc_name }}"
     cidr_block: "{{ vpc_cidr }}"
     state: absent
-  register: my_vpc
+  when: all_vpc.vpcs is defined
