@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  vars_prompt:
+    - name: domain_name
+      prompt: "What is your domain name?"
+      private: no
+      
+  roles:
+    - create-vpc
+    - create-ec2
+
+  environment:
+    AWS_PROFILE: default
+
+- hosts: jenkinserver
+  vars_prompt:
+    - name: domain_name
+      prompt: "What is your domain name?"
+      private: no
+  become: yes
+  remote_user: ubuntu
+
+  roles:
+    - install-packages

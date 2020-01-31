@@ -1,2 +1,90 @@
 ---
-# tasks file for create-vpc
+# tasks file for create_vpc
+
+#creates a vpc
+- name: create vpc
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr }}"
+    state: present
+    tags:
+      name: my-vpc
+  register: my_vpc
+
+# - name: Get the current caller identity information
+#   aws_caller_info:
+#   register: caller_info
+#
+# - debug:
+#     var: caller_info
+
+#creates a public subnet in vpc
+- name: create public subnet 1
+  ec2_vpc_subnet:
+    cidr: "{{ subnet1_cidr }}"
+    vpc_id: "{{ my_vpc.vpc.id }}"
+    az: us-east-1a
+    state: present
+  register: subnet1
+
+#creates a public subnet in vpc
+- name: create public subnet 2
+  ec2_vpc_subnet:
+    cidr: "{{ subnet2_cidr }}"
+    vpc_id: "{{ my_vpc.vpc.id }}"
+    az: us-east-1b
+    state: present
+
+#creates a public subnet in vpc
+- name: create public subnet 3
+  ec2_vpc_subnet:
+    cidr: "{{ subnet3_cidr }}"
+    vpc_id: "{{ my_vpc.vpc.id }}"
+    az: us-east-1c
+    state: present
+
+#creates a IGW and attach it to vpc
+- name: create Internet Gateway
+  ec2_vpc_igw:
+    state: present
+    vpc_id: "{{ my_vpc.vpc.id }}"
+  register: my_vpc_igw
+
+#cretaes a route table and associates subnets to it
+- name: create route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ my_vpc.vpc.id }}"
+    subnets:
+      - "{{ subnet1_cidr }}"
+      - "{{ subnet2_cidr }}"
+      - "{{ subnet3_cidr }}"
+    tags:
+      name: my-rt
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ my_vpc_igw.gateway_id}}"
+    state: present
+
+#creates a ec2 security group
+- name: create security group
+  ec2_group:
+    name: "{{ sg_name }}"
+    description: "security group for jenkins ec2"
+    state: present
+    tags:
+      name: ec2-sg
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 443
+        to_port: 443
+        cidr_ip: 0.0.0.0/0
+
+    vpc_id: "{{ my_vpc.vpc.id }}"
