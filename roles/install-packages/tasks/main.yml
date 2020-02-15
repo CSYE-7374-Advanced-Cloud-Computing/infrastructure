@@ -60,4 +60,14 @@
 
 - name: get certificate
   shell:
-    cmd: certbot --nginx --email hemalgadhiya@gmail.com --agree-tos -n --staging -d jenkins.{{ domain_name|quote }}
+    cmd: certbot --nginx --email hemalgadhiya@gmail.com --agree-tos -n -d jenkins.{{ domain_name|quote }}
+
+- name: install docker
+  apt:
+    name: docker.io
+
+- name: add user
+  shell:
+    cmd: |
+      usermod -a -G docker jenkins
+      usermod -a -G docker ubuntu
